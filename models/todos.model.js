@@ -6,7 +6,7 @@ class TodoModel {
     this.todos = [
       {
         title: '這是預設資料',
-        complete: false,
+        completed: false,
         id: uuidv4(),
       },
     ];
@@ -17,8 +17,7 @@ class TodoModel {
   }
 
   get(id) {
-    console.log('get', id);
-    return this.todos.find((todo) => todo.id === id);
+    return this.todos.find((todo) => String(todo.id) === String(id));
   }
 
   create(todo) {
@@ -39,7 +38,7 @@ class TodoModel {
   }
 
   delete(id) {
-    const index = this.todos.findIndex((todo) => todo.id === id);
+    const index = this.todos.findIndex((todo) => String(todo.id) === String(id));
     if (index !== -1) {
       return this.todos.splice(index, 1)[0];
     }

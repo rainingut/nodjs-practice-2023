@@ -34,7 +34,6 @@ export const createTodo = (req, res) => {
 
 export const updateTodo = (req, res) => {
   const { id } = req.params;
-  console.log(id);
   const todo = TodoModel.update(id, req.body);
   if (!todo) {
     return res.status(404).send('Todo 不存在');
