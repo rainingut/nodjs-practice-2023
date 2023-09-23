@@ -16,8 +16,16 @@ import { fileURLToPath } from 'url';
 import indexRouter from './routes/index.js';
 import usersRouter from './routes/users.js';
 import todosRouter from './routes/todo.router.js';
+// import swaggerDoc from './swagger-output.json'; // 無法讀取JSON檔，要另外用套件讀取檔案
+import swaggerUI from 'swagger-ui-express';
+import fs from 'fs/promises'; 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
+// 讀取JSON檔後成為buffer格式
+const swaggerDocfilePath = path.join(process.cwd(), '/', 'swagger-output.json');
+const swaggerBuffer = await fs.readFile(swaggerDocfilePath);
+// 將buffer轉為物件格式
+const swaggerDoc = JSON.parse(swaggerBuffer);
 
 const app = express();
 
@@ -34,6 +42,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
 app.use('/todos', todosRouter);
+app.use('/api-docs', swaggerUI.serve, swaggerUI.setup(swaggerDoc));
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
