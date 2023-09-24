@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>socket sample</title>
+    <style>
+        :root{
+            --primary: lightcoral
+        }
+        body{
+            padding: 0; margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .btn {
+            background-color: none;
+            border: none;
+            padding: 15px;
+            cursor: pointer;
+        }
+        .container{
+            position: relative;
+            width: 960px;
+            max-width: 100%;
+            height: 100vh;
+        }
+        .user-control{
+            position: absolute;
+            bottom: 0;
+            left: 0; right: 0;
+            padding: 15px;
+        }
+        .controler{
+            display: flex;
+            gap: 10px;
+        }
+        .controler #msgInput{
+            flex-grow: 1;
+            line-height: 1.5;
+            padding: 10px;
+            outline: var(--primary);
+            border: 1px solid var(--primary);
+        }
+        .controler #sendBtn{
+            background: var(--primary);
+            color: white;
+            font-weight: 600;
+        }
+        .user-control p{
+            text-align: right;
+        }
+        #list{
+            padding: 10px;
+            margin-top: 0;
+            margin-bottom: 5rem;
+            height: calc(100% - 10rem);
+            overflow: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+        #list li{
+            display: flex;
+            align-items: center;
+            margin-left: 20px;
+        }
+        #list .chat, #list .user{
+            padding: 15px;
+            width: fit-content;
+            list-style: none;
+            border: 1px solid var(--primary);
+            word-break: break-all;
+        }
+        #list .self {
+            justify-content: end;
+        }
+        #list .self .chat{
+            margin: 0;
+            background: var(--primary);
+        }
+        #list .self .user{
+            order: 1;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="user-control">
+            <div class="controler">
+                <input type="text" id="msgInput" />
+                <button class="btn" type="button" id="sendBtn">SEND</button>
+            </div>
+            <p>uuid: <small id="uuid"></span></p>
+        </div>
+        <ul id="list"></ul>
+    </div>
+
+    <script>
+        const host = `ws://localhost:3456/ws`;
+        const inputElm = document.querySelector(`#msgInput`);
+        const uuidElm  = document.querySelector(`#uuid`);
+        const sendElm  = document.querySelector(`#sendBtn`);
+        const listElm  = document.querySelector(`#list`);
+        const ws = new WebSocket(host);
+        const messages = [];
+        let id = null;
+
+        // ws.onopen = (res) => { console.log(res); }
+
+        ws.onmessage = (res) => {
+            const data = JSON.parse(res.data);
+            switch(data.context){
+                case 'user': 
+                    uuidElm.innerHTML = data.uuid;
+                    id = data.uuid;
+                    break;
+                case 'message': 
+                    messages.push(data);
+                    break;
+                default: break;
+            }
+            renderMsgs();
+        }
+
+        function renderMsgs(){
+            listElm.innerHTML = 
+            messages.map(msg => `<li class="${msg.uuid===id?'self':''}">
+                <span class="user">${msg.uuid.slice(0,3)}</span>
+                <span class="chat ">${msg.content}</span>
+            </li>`).join('');
+        }
+
+        function sendMsg(){
+            if(inputElm.value==='')return;
+            const content = inputElm.value;
+            ws.send(JSON.stringify({content}));
+            inputElm.value = '';
+        }
+        sendElm.addEventListener('click', sendMsg);
+        inputElm.addEventListener('keyup', (e)=>{
+            if(e.keyCode===13){
+                sendMsg();
+            }
+        });
+    </script>
+</body>
+</html>

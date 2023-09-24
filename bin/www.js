@@ -11,6 +11,8 @@
 import app from '../app.js';
 import debug from 'debug';
 import http from 'http';
+import { parse } from 'url';
+import wss1 from '../routes/ws.js';
 const debugInstance = debug('myapp-esm-express:server');
 
 
@@ -26,6 +28,17 @@ app.set('port', port);
  */
 
 var server = http.createServer(app);
+
+server.on('upgrade', function upgrade(request, socket, head) {
+  const { pathname } = parse(request.url);
+  if(pathname==='/ws'){
+    wss1.handleUpgrade(request, socket, head, function done(ws){
+      wss1.emit(`connection`, ws, request);
+    });
+  } else {
+    socket.destroy();
+  }
+});
 
 /**
  * Listen on provided port, on all network interfaces.
