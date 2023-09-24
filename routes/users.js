@@ -1,12 +1,16 @@
-// var express = require('express');
 import express from 'express';
-var router = express.Router();
+import UserCtrl from '../controllers/users.controller.js'; 
 
-/* GET users listing. */
-router.get('/', function(req, res, next) {
-  // #swagger.ignore = true
-  res.send('respond with a resource');
-});
+const router = express.Router();
 
-// module.exports = router;
+// sign up
+router.post('/signup', UserCtrl.createUser );
+
+// sign in
+router.post('/signin', UserCtrl.findUser );
+
+// verify
+router.get('/userinfo', UserCtrl.getUserInfo  );
+
+
 export default router;
