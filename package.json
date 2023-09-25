@@ -19,6 +19,7 @@
     "http-errors": "~1.6.3",
     "jsonwebtoken": "^9.0.2",
     "morgan": "~1.9.1",
+    "puppeteer": "^21.3.4",
     "swagger-autogen": "^2.23.6",
     "swagger-ui-express": "^5.0.0",
     "uuid": "^9.0.1",
