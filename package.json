@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "start": "node ./bin/www.js",
-    "start:dev": "nodemon ./bin/www.js",
+    "dev": "nodemon ./bin/www.js",
     "swagger": "node ./swagger.js",
     "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js",
     "test:watch": "node --experimental-vm-modules node_modules/jest/bin/jest.js --watchAll"
